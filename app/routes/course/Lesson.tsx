@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router';
-import { getCourses } from '../../utils';
+import { getCourses } from '~/utils/course-utils';
 import { ChevronLeft, ChevronRight, CheckCircle2, MessageSquare, FileText, Play, Settings, Maximize2, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 

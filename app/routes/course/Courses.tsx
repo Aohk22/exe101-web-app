@@ -1,4 +1,4 @@
-import { getCourses } from '../../utils';
+import { getCourses } from '~/utils/course-utils';
 import { Search, Filter, Clock, BookOpen, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router';
 import { useState } from 'react';
@@ -43,8 +43,8 @@ export default function Courses() {
 						key={cat}
 						onClick={() => setActiveCategory(cat)}
 						className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${activeCategory === cat
-								? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
-								: 'bg-white text-neutral-500 border border-neutral-200 hover:border-neutral-300'
+							? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200'
+							: 'bg-white text-neutral-500 border border-neutral-200 hover:border-neutral-300'
 							}`}
 					>
 						{cat}

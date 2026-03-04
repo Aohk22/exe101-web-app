@@ -1,38 +1,10 @@
 import { useParams, Link } from 'react-router';
-import { getCourses } from '../../utils';
+import { getCourses, getModules } from '~/utils/course-utils';
 import { Play, CheckCircle2, Clock, BookOpen, User, Star, Share2, Heart, ChevronRight, GraduationCap } from 'lucide-react';
-import { motion } from 'motion/react';
+// import { motion } from 'motion/react';
 
 const COURSES = getCourses()
-
-const MOCK_MODULES = [
-	{
-		id: 'm1',
-		title: 'Getting Started',
-		lessons: [
-			{ id: 'l1', title: 'Course Overview', duration: '5:00', completed: true, type: 'video' },
-			{ id: 'l2', title: 'Setting up your environment', duration: '12:30', completed: true, type: 'video' },
-			{ id: 'l3', title: 'Basic Concepts', duration: '15:45', completed: false, type: 'video' },
-		]
-	},
-	{
-		id: 'm2',
-		title: 'Core Fundamentals',
-		lessons: [
-			{ id: 'l4', title: 'Understanding the Architecture', duration: '20:00', completed: false, type: 'video' },
-			{ id: 'l5', title: 'Working with Data', duration: '25:15', completed: false, type: 'video' },
-			{ id: 'l6', title: 'Quiz: Fundamentals', duration: '10:00', completed: false, type: 'quiz' },
-		]
-	},
-	{
-		id: 'm3',
-		title: 'Advanced Techniques',
-		lessons: [
-			{ id: 'l7', title: 'Optimization Strategies', duration: '18:30', completed: false, type: 'video' },
-			{ id: 'l8', title: 'Real-world Applications', duration: '30:00', completed: false, type: 'video' },
-		]
-	}
-];
+const MODULES = getModules()
 
 export default function CourseDetail() {
 	const { courseId } = useParams();
@@ -42,6 +14,7 @@ export default function CourseDetail() {
 		<div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 			{/* Left Content */}
 			<div className="lg:col-span-2 space-y-8">
+				{/* Description */}
 				<div className="space-y-4">
 					<div className="flex items-center gap-2">
 						<Link to="/courses" className="text-sm text-neutral-500 hover:text-indigo-600 transition-colors">Courses</Link>
@@ -54,8 +27,11 @@ export default function CourseDetail() {
 					</p>
 				</div>
 
+				{/* Instructor/Ratings */}
 				<div className="flex flex-wrap items-center gap-6 py-4 border-y border-neutral-100">
 					<div className="flex items-center gap-2">
+						{/* TODO: avatar is preferable user controlled */}
+						{/* TODO: instructor name should be a separate entity from course */}
 						<div className="w-10 h-10 rounded-full bg-neutral-100 overflow-hidden">
 							<img src={`https://ui-avatars.com/api/?name=${course.instructor}&background=random`} alt={course.instructor} />
 						</div>
@@ -68,18 +44,20 @@ export default function CourseDetail() {
 						<div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
 							<Star className="w-5 h-5 text-amber-500 fill-amber-500" />
 						</div>
+						{/* TODO: ratings should be fetch from database */}
 						<div>
 							<p className="text-xs text-neutral-400 font-medium">Rating</p>
-							<p className="text-sm font-bold text-neutral-900">4.9 (2.4k reviews)</p>
+							<p className="text-sm font-bold text-neutral-900">{'<ratings>'}</p>
 						</div>
 					</div>
 					<div className="flex items-center gap-2">
+						{/* TODO: enrollment count should be fetch from database */}
 						<div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
 							<User className="w-5 h-5 text-indigo-600" />
 						</div>
 						<div>
 							<p className="text-xs text-neutral-400 font-medium">Students</p>
-							<p className="text-sm font-bold text-neutral-900">15,420 enrolled</p>
+							<p className="text-sm font-bold text-neutral-900">{'<enrolled_count>'}</p>
 						</div>
 					</div>
 				</div>
@@ -88,11 +66,11 @@ export default function CourseDetail() {
 				<div className="space-y-6">
 					<div className="flex items-center justify-between">
 						<h2 className="text-2xl font-bold text-neutral-900">Course Content</h2>
-						<p className="text-sm text-neutral-500">{MOCK_MODULES.length} modules • {course.lessonsCount} lessons</p>
+						<p className="text-sm text-neutral-500">{MODULES.length} modules • {course.lessonsCount} lessons</p>
 					</div>
 
 					<div className="space-y-4">
-						{MOCK_MODULES.map((module, i) => (
+						{MODULES.map((module, i) => (
 							<div key={module.id} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
 								<div className="p-4 bg-neutral-50 border-b border-neutral-100 flex items-center justify-between">
 									<h3 className="font-bold text-neutral-900">Module {i + 1}: {module.title}</h3>
@@ -106,17 +84,17 @@ export default function CourseDetail() {
 											className="p-4 flex items-center justify-between hover:bg-neutral-50 transition-colors group"
 										>
 											<div className="flex items-center gap-4">
-												<div className={cn(
-													"w-8 h-8 rounded-full flex items-center justify-center transition-colors",
-													lesson.completed ? "bg-emerald-100 text-emerald-600" : "bg-neutral-100 text-neutral-400 group-hover:bg-indigo-100 group-hover:text-indigo-600"
-												)}>
+												<div className={
+													"w-8 h-8 rounded-full flex items-center justify-center transition-colors" +
+														lesson.completed ? "bg-emerald-100 text-emerald-600" : "bg-neutral-100 text-neutral-400 group-hover:bg-indigo-100 group-hover:text-indigo-600"
+												}>
 													{lesson.completed ? <CheckCircle2 className="w-5 h-5" /> : <Play className="w-4 h-4" />}
 												</div>
 												<div>
-													<p className={cn(
-														"text-sm font-medium transition-colors",
-														lesson.completed ? "text-neutral-500" : "text-neutral-900 group-hover:text-indigo-600"
-													)}>
+													<p className={
+														"text-sm font-medium transition-colors" +
+															lesson.completed ? "text-neutral-500" : "text-neutral-900 group-hover:text-indigo-600"
+													}>
 														{lesson.title}
 													</p>
 													<div className="flex items-center gap-2 mt-0.5">
@@ -153,16 +131,18 @@ export default function CourseDetail() {
 					</div>
 
 					<div className="space-y-4">
+						{/* TODO: retrive pricing info from database */}
 						<div className="flex items-baseline gap-2">
-							<span className="text-3xl font-bold text-neutral-900">$49.99</span>
-							<span className="text-neutral-400 line-through text-sm">$89.99</span>
-							<span className="text-emerald-600 font-bold text-sm">45% OFF</span>
+							<span>{'<Pricing info here>'}</span>
 						</div>
 
+						{/* TODO: enrolls user to a course */}
 						<button className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-[0.98]">
 							Enroll Now
 						</button>
 
+						{/* TODO: items in wishlist sends notification based on sale */}
+						{/* TODO: share button returns link to course */}
 						<div className="grid grid-cols-2 gap-2">
 							<button className="flex items-center justify-center gap-2 py-3 border border-neutral-200 rounded-xl text-sm font-medium hover:bg-neutral-50 transition-colors">
 								<Heart className="w-4 h-4" /> Wishlist
@@ -194,8 +174,3 @@ export default function CourseDetail() {
 		</div>
 	);
 }
-
-function cn(...inputs: any[]) {
-	return inputs.filter(Boolean).join(' ');
-}
-

@@ -1,4 +1,4 @@
-import { getCourses } from '~/utils';
+import { getCourses } from '~/utils/course-utils';
 import { Link, useRouteLoaderData } from 'react-router';
 import { motion } from 'motion/react';
 import { BookOpen, Clock, Star, ArrowRight, PlayCircle, GraduationCap } from 'lucide-react';
