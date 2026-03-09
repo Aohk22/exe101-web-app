@@ -5,9 +5,9 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-} from "react-router";
-import type { Route } from "./+types/root";
-import "./app.css";
+} from "react-router"
+import type { Route } from "./+types/root"
+import "./root.css"
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
