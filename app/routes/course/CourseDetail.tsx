@@ -1,14 +1,27 @@
-import { useParams, Link } from 'react-router';
-import { getCourses, getModules } from '~/utils/course-utils';
+import { Link, type LoaderFunctionArgs, useLoaderData, useRouteLoaderData } from 'react-router';
 import { Play, CheckCircle2, Clock, BookOpen, User, Star, Share2, Heart, ChevronRight, GraduationCap } from 'lucide-react';
-// import { motion } from 'motion/react';
+import { courseService, progressService } from '~/.server/container/services';
+import type { Course, Lesson, Module, UsersToLessons } from '~/types';
+import { userContext } from '~/context';
 
-const COURSES = getCourses()
-const MODULES = getModules()
+export async function loader({ params, context }: LoaderFunctionArgs) {
+	const courseId = Number(params.courseId)
+	const course = courseService.getCourse(courseId)
+	const modules = courseService.getCourseModules(courseId)
+	const lessons = courseService.getCourseLessons(courseId)
+	// const progress = progressService.getUserProgress(context.get(userContext))
+	const progress = progressService.getUserProgress(1) // TODO: replace hard coded value
+	return { course, modules, lessons, progress }
+}
 
 export default function CourseDetail() {
-	const { courseId } = useParams();
-	const course = COURSES.find(c => c.id === courseId) || COURSES[0];
+	const { course, modules, lessons, progress } = useLoaderData() as {
+		course: Course,
+		modules: Module[],
+		lessons: Lesson[],
+		progress: UsersToLessons[]
+	}
+	// const user = useRouteLoaderData('routes/protected')
 
 	return (
 		<div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -30,8 +43,7 @@ export default function CourseDetail() {
 				{/* Instructor/Ratings */}
 				<div className="flex flex-wrap items-center gap-6 py-4 border-y border-neutral-100">
 					<div className="flex items-center gap-2">
-						{/* TODO: avatar is preferable user controlled */}
-						{/* TODO: instructor name should be a separate entity from course */}
+						{/* TODO: avatar is preferably user controlled */}
 						<div className="w-10 h-10 rounded-full bg-neutral-100 overflow-hidden">
 							<img src={`https://ui-avatars.com/api/?name=${course.instructor}&background=random`} alt={course.instructor} />
 						</div>
@@ -66,54 +78,62 @@ export default function CourseDetail() {
 				<div className="space-y-6">
 					<div className="flex items-center justify-between">
 						<h2 className="text-2xl font-bold text-neutral-900">Course Content</h2>
-						<p className="text-sm text-neutral-500">{MODULES.length} modules • {course.lessonsCount} lessons</p>
+						<p className="text-sm text-neutral-500">{modules.length} modules • {lessons.length} lessons</p>
 					</div>
 
 					<div className="space-y-4">
-						{MODULES.map((module, i) => (
-							<div key={module.id} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
-								<div className="p-4 bg-neutral-50 border-b border-neutral-100 flex items-center justify-between">
-									<h3 className="font-bold text-neutral-900">Module {i + 1}: {module.title}</h3>
-									<span className="text-xs text-neutral-500 font-medium">{module.lessons.length} lessons</span>
-								</div>
-								<div className="divide-y divide-neutral-50">
-									{module.lessons.map((lesson) => (
-										<Link
-											key={lesson.id}
-											to={`/courses/${course.id}/lessons/${lesson.id}`}
-											className="p-4 flex items-center justify-between hover:bg-neutral-50 transition-colors group"
-										>
-											<div className="flex items-center gap-4">
-												<div className={
-													"w-8 h-8 rounded-full flex items-center justify-center transition-colors" +
-														lesson.completed ? "bg-emerald-100 text-emerald-600" : "bg-neutral-100 text-neutral-400 group-hover:bg-indigo-100 group-hover:text-indigo-600"
-												}>
-													{lesson.completed ? <CheckCircle2 className="w-5 h-5" /> : <Play className="w-4 h-4" />}
-												</div>
-												<div>
-													<p className={
-														"text-sm font-medium transition-colors" +
-															lesson.completed ? "text-neutral-500" : "text-neutral-900 group-hover:text-indigo-600"
-													}>
-														{lesson.title}
-													</p>
-													<div className="flex items-center gap-2 mt-0.5">
-														<span className="text-[10px] font-bold uppercase text-neutral-400">{lesson.type}</span>
-														<span className="w-0.5 h-0.5 bg-neutral-300 rounded-full"></span>
-														<span className="text-[10px] text-neutral-400">{lesson.duration}</span>
+						{modules.map((module, i) => {
+							const filteredLessons = lessons.filter(l => l.moduleId === module.id)
+							const lessonsCount = filteredLessons.length
+							return (
+								<div key={module.id} className="bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
+									<div className="p-4 bg-neutral-50 border-b border-neutral-100 flex items-center justify-between">
+										<h3 className="font-bold text-neutral-900">Module {i + 1}: {module.title}</h3>
+										<span className="text-xs text-neutral-500 font-medium">{
+											lessonsCount
+										} lessons</span>
+									</div>
+									<div className="divide-y divide-neutral-50">
+										{filteredLessons.map((lesson) => {
+											const lessonStatus = progress.find(col => col.lessonId === lesson.id)?.completed
+											return (
+												<Link
+													key={lesson.id}
+													to={`/courses/${course.id}/lessons/${lesson.id}`}
+													className="p-4 flex items-center justify-between hover:bg-neutral-50 transition-colors group"
+												>
+													<div className="flex items-center gap-4">
+														<div className={
+															"w-8 h-8 rounded-full flex items-center justify-center transition-colors" +
+																lessonStatus ? "bg-emerald-100 text-emerald-600" : "bg-neutral-100 text-neutral-400 group-hover:bg-indigo-100 group-hover:text-indigo-600"
+														}>
+															{lessonStatus ? <CheckCircle2 className="w-5 h-5" /> : <Play className="w-4 h-4" />}
+														</div>
+														<div>
+															<p className={
+																"text-sm font-medium transition-colors" +
+																	lessonStatus ? "text-neutral-500" : "text-neutral-900 group-hover:text-indigo-600"
+															}>
+																{lesson.title}
+															</p>
+															<div className="flex items-center gap-2 mt-0.5">
+																<span className="w-0.5 h-0.5 bg-neutral-300 rounded-full"></span>
+																<span className="text-[10px] text-neutral-400">{lesson.length}</span>
+															</div>
+														</div>
 													</div>
-												</div>
-											</div>
-											{!lesson.completed && (
-												<span className="text-xs font-bold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
-													Start
-												</span>
-											)}
-										</Link>
-									))}
+													{!lessonStatus && (
+														<span className="text-xs font-bold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+															Start
+														</span>
+													)}
+												</Link>
+											)
+										})}
+									</div>
 								</div>
-							</div>
-						))}
+							)
+						})}
 					</div>
 				</div>
 			</div>

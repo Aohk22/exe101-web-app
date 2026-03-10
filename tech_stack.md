@@ -1,3 +1,5 @@
-Frontend & Backend: React + React Router (formerly Remix)
+Frontend & Backend: React + React Router (Remix)
 
 Database driver: Postgresql
+
+ORM: Drizzle

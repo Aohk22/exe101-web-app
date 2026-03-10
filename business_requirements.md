@@ -1,39 +1,34 @@
-# Entities
+# Schema
 
-## User
+Required entities: user, course, module, lesson, review.
 
-Type: staff, student.
-
-## Course
-
-Thumbnail, title, summary.
-
-## Module
-
-Belongs to course. Module 1-M.
-
-## Lesson
-
-Belongs to module. Lesson 1-M.
+Refer to [./app/.server/db/schema.ts](drizzle schema code).
 
 # Requirements
 
+## Data
+
+User **enrolls** to course.
+
+User **unenrolls** from course.
+
+User **has** course progress.
+
+User **makes** a review.
+
+Course **contains** modules.
+
+Course **has** a review.
+
+Module **contains** lessons.
+
 ## For webapp
 
-### Administration
+- Role based access.
+- Authentication.
 
-- Role based access, authentication.
-- A course builder.
-- User should have dashboard
-- User (student) can enroll to a Course.
+- Drop down.
+- Text search.
 
-### Info lookup
-
-- Search, basic filtering (drop down selection).
-- A page for course details.
-
-### Info
-
-- Lesson page: text rendering, embedding, videos, files.
 - Progress tracking.
 

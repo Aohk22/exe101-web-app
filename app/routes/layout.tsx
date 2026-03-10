@@ -1,8 +1,6 @@
-import { Outlet, Link, useLocation } from 'react-router'
+import { Outlet, Link, useLocation, useRouteLoaderData } from 'react-router'
 import { LayoutDashboard, BookOpen, GraduationCap, Settings, Bell, Search, User } from 'lucide-react'
 import { motion } from 'motion/react'
-import { authMiddleware } from '../middleware/auth'
-import type { Route } from '../+types/root';
 
 const navItems = [
 	{ label: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -11,24 +9,18 @@ const navItems = [
 	{ label: 'Settings', href: '/settings', icon: Settings },
 ];
 
-export const middleware: Route.MiddlewareFunction[] = [
-	authMiddleware
-]
-
 function Sidebar() {
 	const location = useLocation()
+	const user = useRouteLoaderData('routes/protected')
 	return (
 		<aside className="w-64 border-r border-neutral-200 bg-white hidden md:flex flex-col sticky top-0 h-screen">
 			<div className="p-6">
 				<Link to="/" className="flex items-center gap-2">
-					<div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-						<GraduationCap className="text-white w-5 h-5" />
-					</div>
-					<span className="font-bold text-xl tracking-tight">Lumina</span>
+					<span className="font-bold text-xl tracking-tight">CyberSpace Academy</span>
 				</Link>
 			</div>
 
-			<nav className="flex-1 px-4 space-y-1">
+			<nav className="flex-1 px-4 py-6 space-y-6 bg-white border-r border-neutral-200">
 				{navItems.map((item) => {
 					const isActive = location.pathname === item.href;
 					return (
@@ -37,9 +29,9 @@ function Sidebar() {
 							to={item.href}
 							className={
 								"flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors " +
-									isActive
+								(isActive
 									? "bg-indigo-50 text-indigo-600"
-									: "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+									: "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900")
 							}
 						>
 							<item.icon className="w-5 h-5" />
@@ -51,12 +43,14 @@ function Sidebar() {
 
 			<div className="p-4 border-t border-neutral-100">
 				<div className="flex items-center gap-3 p-2 rounded-xl hover:bg-neutral-50 transition-colors cursor-pointer">
+					<p>{'<user_icon>'}</p>
+					{/*
 					<div className="w-10 h-10 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden">
-						<User className="w-6 h-6 text-neutral-400" />
-					</div>
+					</div>*/}
 					<div className="flex-1 min-w-0">
-						<p className="text-sm font-medium text-neutral-900 truncate">Alex Johnson</p>
-						<p className="text-xs text-neutral-500 truncate">Pro Learner</p>
+						{/* TODO: correct user type */}
+						<p className="text-sm font-medium text-neutral-900 truncate">{user}</p>
+						<p className="text-xs text-neutral-500 truncate">{'<user_type>'}</p>
 					</div>
 				</div>
 			</div>
@@ -64,7 +58,7 @@ function Sidebar() {
 	)
 }
 
-function MainContent() {
+function Main() {
 	return (
 		<main className="flex-1 flex flex-col min-w-0" >
 			{/* Header */}
@@ -108,7 +102,7 @@ export default function MainLayout() {
 	return (
 		<div className="flex min-h-screen bg-neutral-50">
 			<Sidebar />
-			<MainContent />
+			<Main />
 		</div >
 	)
 }
