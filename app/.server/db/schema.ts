@@ -49,11 +49,11 @@ export const usersToCourses = pgTable("users_to_courses", (t) => (
 
 export const usersToLessons = pgTable("users_to_lessons", (t) => (
 	{
-		usersId: t.integer("user_id").notNull().references(() => users.id),
+		userId: t.integer("user_id").notNull().references(() => users.id),
 		lessonId: t.integer('lesson_id').notNull().references(() => lessons.id),
 		completed: t.boolean().default(false),
 	}),
-	(t) => [primaryKey({ columns: [t.usersId, t.lessonId] })],
+	(t) => [primaryKey({ columns: [t.userId, t.lessonId] })],
 )
 
 export const relations = defineRelations({ users, courses, modules, lessons, reviews, usersToCourses },

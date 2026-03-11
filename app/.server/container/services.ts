@@ -1,12 +1,12 @@
 import { CourseService } from "~/.server/service/CourseService"
-import { CourseRepositoryMock } from "~/.server/domain/repository/CourseRepositoryMock";
-import { ModuleRepositoryMock } from "~/.server/domain/repository/ModuleRepositoryMock";
-import { LessonRepositoryMock } from "../domain/repository/LessonRepositoryMock";
-import { ProgressService } from "../service/ProgressService";
+import { MockCourseRepository } from "~/.server/infrastructure/repository/MockCourseRepository";
+import { MockModuleRepository } from "~/.server/infrastructure/repository/MockModuleRepository";
+import { MockLessonRepository } from "~/.server/infrastructure/repository/MockLessonRepository";
+import { ProgressService } from "~/.server/service/ProgressService";
 
-const courseRepo = new CourseRepositoryMock()
-const moduleRepo = new ModuleRepositoryMock()
-const lessonRepo = new LessonRepositoryMock()
+const courseRepo = new MockCourseRepository()
+const moduleRepo = new MockModuleRepository()
+const lessonRepo = new MockLessonRepository()
 
 export const courseService = new CourseService(courseRepo, moduleRepo, lessonRepo);
 export const progressService = new ProgressService()

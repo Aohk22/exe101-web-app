@@ -1,8 +1,8 @@
-import type { ModuleRepositoryI } from "~/.server/domain/repository/ModuleRepositoryI";
+import type { ModuleRepository } from "~/.server/domain/repository/ModuleRepository";
 import type { Module } from "~/types";
-import { modules } from "~/.server/mocks/mock-data";
+import { modules } from "~/.server/mocks/raw-sample";
 
-export class ModuleRepositoryMock implements ModuleRepositoryI {
+export class MockModuleRepository implements ModuleRepository {
 	findById(id: number): Module | undefined {
 		return modules.find(m => m.id === id)
 	}

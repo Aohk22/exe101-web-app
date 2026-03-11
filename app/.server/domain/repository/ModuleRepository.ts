@@ -1,6 +1,6 @@
 import type { Module } from "~/types";
 
-export interface ModuleRepositoryI {
+export interface ModuleRepository {
 	findById(id: number): Module | undefined
 	findMany(): Module[]
 	findByCourseId(courseId: number): Module[]

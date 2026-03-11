@@ -1,8 +1,8 @@
-import type { CourseRepositoryI } from '~/.server/domain/repository/CourseRepositoryI';
+import type { CourseRepository } from '~/.server/domain/repository/CourseRepository';
 import type { Course } from '~/types';
-import { courses } from '~/.server/mocks/mock-data'
+import { courses } from '~/.server/mocks/raw-sample'
 
-export class CourseRepositoryMock implements CourseRepositoryI {
+export class MockCourseRepository implements CourseRepository {
 	findById(id: number): Course | undefined {
 		return courses.find(c => c.id === id)
 	}
